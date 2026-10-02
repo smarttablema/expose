@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aerostar Academy • Elite Executive Exposé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #010409;
+            --surface: #0d1117;
+            --aerostar-cyan: #38bdf8;
+            --aerostar-indigo: #6366f1;
+            --aerostar-gold: #fbbf24;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-glow: rgba(56, 189, 248, 0.35);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
+        [dir="rtl"] * { font-family: 'Tajawal', sans-serif !important; text-align: right; }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.12) 0%, transparent 75%),
+                url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hud-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(1, 4, 9, 0.90), rgba(13, 17, 23, 0.96));
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .stage-container {
+            width: 95vw;
+            max-width: 1350px;
+            height: 89vh;
+            max-height: 850px;
+            background: rgba(13, 17, 23, 0.92);
+            backdrop-filter: blur(50px);
+            border-radius: 40px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 140px rgba(0, 0, 0, 0.95), 0 0 60px rgba(56, 189, 248, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 3.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(1, 4, 9, 0.7);
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--aerostar-cyan);
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 25px var(--aerostar-cyan);
+        }
+
+        .presenter-badge-top {
+            font-size: 0.88rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(56, 189, 248, 0.2));
+            color: #818cf8;
+            padding: 7px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+        }
+
+        .lang-container {
+            display: flex;
+            background: rgba(1, 4, 9, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 4px;
+        }
+
+        .lang-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-tab.active {
+            background: var(--aerostar-cyan);
+            color: var(--bg-deep);
+            box-shadow: 0 0 20px var(--aerostar-cyan);
+        }
+
+        @keyframes pageTransition {
+            0% { opacity: 0; transform: translateY(25px) scale(0.98); filter: blur(6px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .slide-viewport {
+            flex: 1;
+            padding: 2.8rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: pageTransition 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .slide-viewport::-webkit-scrollbar { display: none; }
+
+        .chapter-tag {
+            font-size: 0.82rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3.5px;
+            color: var(--aerostar-gold);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 40%, var(--aerostar-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .prose-content {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.85;
+            margin-bottom: 1.2rem;
+            max-width: 1100px;
+        }
+        .prose-content strong { color: var(--text-main); font-weight: 700; }
+
+        .modern-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-top: 0.8rem;
+        }
+
+        .modern-card {
+            background: rgba(1, 4, 9, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            border-radius: 22px;
+            padding: 1.5rem;
+            transition: all 0.35s ease;
+        }
+        .modern-card:hover {
+            border-color: var(--aerostar-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.18);
+        }
+        .modern-card h3 {
+            font-size: 1.05rem;
+            color: var(--aerostar-cyan);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        .modern-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .hud-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(1, 4, 9, 0.75);
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 12px;
+        }
+
+        .indicator-bar {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .indicator-bar.active {
+            width: 45px;
+            border-radius: 6px;
+            background: var(--aerostar-cyan);
+            box-shadow: 0 0 20px var(--aerostar-cyan);
+        }
+
+        .hud-btn {
+            background: linear-gradient(135deg, var(--aerostar-cyan), #0284c7);
+            color: var(--bg-deep);
+            border: none;
+            padding: 0.95rem 2.6rem;
+            border-radius: 16px;
+            font-weight: 900;
+            font-size: 0.98rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+            transition: transform 0.1s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .hud-btn:active { transform: scale(0.97); }
+        .hud-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+
+        .climax-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(1, 4, 9, 0.99);
+            backdrop-filter: blur(40px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            animation: pageTransition 0.5s ease forwards;
+            padding: 2rem;
+        }
+
+        .climax-box {
+            width: 100%;
+            max-width: 950px;
+            background: rgba(13, 17, 23, 0.98);
+            border: 2px solid var(--aerostar-gold);
+            border-radius: 40px;
+            padding: 2.5rem;
+            box-shadow: 0 0 140px rgba(251, 191, 36, 0.35);
+            text-align: center;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+            border: 1px solid var(--aerostar-cyan);
+            box-shadow: 0 0 30px var(--aerostar-cyan);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hud-overlay"></div>
+
+    <div class="stage-container">
+        <!-- Top HUD Header -->
+        <div class="hud-header">
+            <div class="brand-title">
+                <span>✈</span> <span id="header-brand-title">AEROSTAR ACADEMY • EXECUTIVE BRIEFING</span>
+            </div>
+            <div id="presenter-display" class="presenter-badge-top">Presenter: Mohammed</div>
+            <div class="lang-container">
+                <button class="lang-tab active" id="tab-en" onclick="switchLanguage('en')">EN</button>
+                <button class="lang-tab" id="tab-fr" onclick="switchLanguage('fr')">FR</button>
+                <button class="lang-tab" id="tab-ar" onclick="switchLanguage('ar')">AR</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Slide Viewport -->
+        <div id="slide-viewport" class="slide-viewport">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- Bottom HUD Controls -->
+        <div class="hud-footer">
+            <button class="hud-btn secondary" id="prev-btn" onclick="prevSlide()">← Previous</button>
+            <div class="progress-indicator" id="progress-indicator"></div>
+            <button class="hud-btn" id="next-btn" onclick="nextSlide()">Next Chapter →</button>
+        </div>
+    </div>
+
+    <!-- Bulletproof Live Climax Modal -->
+    <div id="climax-modal" class="climax-modal">
+        <div class="climax-box">
+            <h2 style="color:var(--aerostar-gold); font-size:2rem; font-weight:900;" id="climax-heading">Mission Accomplished: Final Climax</h2>
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-top:4px;" id="climax-desc">Aerostar Academy Presentation Finale</p>
+            
+            <div class="video-container">
+                <iframe id="youtube-embed" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div style="margin-top:1.8rem; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+                <a href="https://www.youtube.com/watch?v=4nJEaSkqk6w" target="_blank" class="hud-btn" style="background:var(--aerostar-gold); color:#010409;">▶ Open Direct Link (Emergency Backup)</a>
+                <button class="hud-btn secondary" onclick="restartPresentation()">Restart Briefing ↺</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIdx = 0;
+        let activeLang = 'en';
+
+        const presentationSlides = [
+            {
+                presenter: { 
+                    en: "Presenter: Mohammed (Project Lead)", 
+                    fr: "Présentateur : Mohammed (Chef de Projet)", 
+                    ar: "المقدم: محمد (قائد المشروع)" 
+                },
+                chapter: { 
+                    en: "Chapter 01 • Introduction & Ecosystem", 
+                    fr: "Chapitre 01 • Introduction & Écosystème", 
+                    ar: "الفصل 01 • المقدمة والنظام البيئي" 
+                },
+                title: { 
+                    en: "The Aviation Work Environment: Operational Synergy", 
+                    fr: "L'Environnement de Travail Aéronautique : La Synergie Opérationnelle", 
+                    ar: "بيئة عمل الطيران: التآزر التشغيلي" 
+                },
+                body: {
+                    en: "Modern aviation is much more than aircraft in flight; it is a synchronized, high-stakes ecosystem where human performance, technical precision, and absolute security converge. Every single flight depends on a flawless ground network, uniting national airport operators like <strong>ONDA</strong> and multidisciplinary professionals under uncompromising international EASA and ICAO standards.",
+                    fr: "L'aviation moderne ne se résume pas à des aéronefs en vol ; c'est un écosystème hautement synchronisé où se croisent performances humaines, précision technique et sécurité absolue. Chaque vol repose sur un réseau au sol sans faille, unissant les opérateurs aéroportuaires comme l'<strong>ONDA</strong> sous de stricts standards internationaux EASA et OACI.",
+                    ar: "الطيران الحديث هو أكثر بكثير من مجرد طائرات تحلق في الهواء؛ إنه نظام بيئي متزامن عالي المخاطر تتقارب فيه أداء الإنسان، الدقة التقنية، والأمان المطلق. تعتمد كل رحلة جوية على شبكة أرضية خالية من الأخطاء، تجمع بين مشغلي المطارات الوطنية مثل <strong>ONDA</strong> والمهنيين المتعددين التخصصات تحت معايير EASA و ICAO الدولية."
+                }
+            },
+            {
+                presenter: { 
+                    en: "Presenter: Farah", 
+                    fr: "Présentateur : Farah", 
+                    ar: "المقدم: فرح" 
+                },
+                chapter: { 
+                    en: "Chapter 02 • Infrastructure Architecture", 
+                    fr: "Chapitre 02 • Architecture des Infrastructures", 
+                    ar: "الفصل 02 • هندسة البنية التحتية" 
+                },
+                title: { 
+                    en: "Airport Zones: Landside vs. Airside Security", 
+                    fr: "Zones Aéroportuaires : Côté Ville vs. Côté Piste", 
+                    ar: "مناطق المطار: الجانب البري مقابل الجانب الجوي" 
+                },
+                grid: {
+                    en: [
+                        { title: "🏢 Landside & Terminal Hubs", text: "The primary passenger interface handling security screening, customs, customer service, and dense passenger flow management prior to departure clearance." },
+                        { title: "🛫 Airside & Tarmac Infrastructure", text: "Dynamic runways, taxiways, and aprons where ground movements require rigorous situational awareness, standardized radiotelephony, and strict ground control obedience." }
+                    ],
+                    fr: [
+                        { title: "🏢 Côté Public & Terminaux", text: "L'interface passager gérant le filtrage de sûreté, les douanes, l'accueil et la régulation des flux denses avant l'autorisation de départ." },
+                        { title: "🛫 Côté Piste & Tarmac", text: "Pistes et tarmac dynamiques où les déplacements exigent une conscience situationnelle accrue, une radiotéléphonie normalisée et un strict respect du guidage." }
+                    ],
+                    ar: [
+                        { title: "🏢 الجانب البري ومحطات الركاب", text: "واجهة الركاب الأساسية التي تتعامل مع التفتيش الأمني، الجمارك، خدمة العملاء، وإدارة تدفق الركاب الكثيف قبل إذن المغادرة." },
+                        { title: "🛫 الجانب الجوي البنية التحتية للمدرج", text: "المدرجات الديناميكية وممرات الطائرات حيث تتطلب الحركات الأرضية وعياً ظرفياً صارماً، واتصالات لاسلكية قياسية والالتزام الصارم بالتحكم الأرضي." }
+                    ]
+                }
+            },
+            {
+                presenter: { 
+                    en: "Presenter: Malak", 
+                    fr: "Présentateur : Malak", 
+                    ar: "المقدم: ملاك" 
+                },
+                chapter: { 
+                    en: "Chapter 03 • Fleet Mastery (Narrow-Body)", 
+                    fr: "Chapitre 03 • Maîtrise de la Flotte (Monocouloirs)", 
+                    ar: "الفصل 03 • إتقان أسطول الطائرات ذات الممر الواحد" 
+                },
+                title: { 
+                    en: "Narrow-Body Configurations (A320 / B737)", 
+                    fr: "Configurations des Appareils Monocouloirs (A320 / B737)", 
+                    ar: "تكوينات الطائرات ذات الممر الواحد (A320 / B737)" 
+                },
+                grid: {
+                    en: [
+                        { title: "✈️ Airbus A320 Family Layout", text: "Single-aisle workhorse featuring Type III overwing emergency exits and four main door stations (L1/L2, R1/R2). Cabin crew manage compact galley setups and single-lane slide evacuations." },
+                        { title: "✈️ Boeing 737NG / MAX Configuration", text: "Standardized narrow-body cabin configuration optimized for short-to-medium haul routes, featuring integrated slide-rafts and strict exit-row briefing protocols." }
+                    ],
+                    fr: [
+                        { title: "✈️ Aménagement Famille Airbus A320", text: "Monocouloirs dotés d'issues de secours Type III sur les ailes et de quatre portes principales (L1/L2, R1/R2). L'équipage gère galleys compacts et toboggans à voie unique." },
+                        { title: "✈️ Configuration Boeing 737NG / MAX", text: "Cabine monocouloir optimisée pour le court/moyen courrier, dotée de toboggans-radeaux intégrés et de protocoles stricts pour les issues de secours." }
+                    ],
+                    ar: [
+                        { title: "✈️ تخطيط عائلة إيرباص A320", text: "طائرات ذات ممر واحد تضم مخارج طوارئ فوق الأجنحة من النوع الثالث وأربع محطات أبواب رئيسية. يدير طاقم المقصورة المطابخ وإخلاء الزلاقات." },
+                        { title: "✈️ تكوين بوينغ 737NG / MAX", text: "تكوين مقصورة قياسي محسّن للرحلات القصيرة إلى المتوسطة، ويتميز بطوافات إنقاذ منزلقة وبروتوكولات إحاطة صارمة لمخارج الطوارئ." }
+                    ]
+                }
+            },
+            {
+                presenter: { 
+                    en: "Presenter: Miloudi", 
+                    fr: "Présentateur : Miloudi", 
+                    ar: "المقدم: ميلودي" 
+                },
+                chapter: { 
+                    en: "Chapter 03 • Fleet Mastery (Wide-Body)", 
+                    fr: "Chapitre 03 • Maîtrise de la Flotte (Gros Porteurs)", 
+                    ar: "الفصل 03 • إتقان أسطول الطائرات عريضة البدن" 
+                },
+                title: { 
+                    en: "Wide-Body Configurations (B777 / A350)", 
+                    fr: "Configurations des Gros Porteurs (B777 / A350)", 
+                    ar: "تكوينات الطائرات عريضة البدن (B777 / A350)" 
+                },
+                grid: {
+                    en: [
+                        { title: "🌐 Boeing 777-300ER Heavy Layout", text: "Twin-aisle wide-body aircraft with multi-zone cabins, overhead and below-deck crew rest compartments, and high-capacity multi-door slide-raft emergency systems." },
+                        { title: "🌐 Airbus A350 XWB Configuration", text: "Advanced wide-body architecture featuring composite fuselage aerodynamics, spacious multi-class galleys, and state-of-the-art emergency evacuation command panels." }
+                    ],
+                    fr: [
+                        { title: "🌐 Aménagement Boeing 777-300ER", text: "Gros porteur bibactère à double couloir avec cabines multi-zones, soutes de repos d'équipage et systèmes d'évacuation multi-portes complexes." },
+                        { title: "🌐 Configuration Airbus A350 XWB", text: "Architecture avancée en matériaux composites, galleys multi-classes spacieux et panneaux de commande d'évacuation ultramodernes." }
+                    ],
+                    ar: [
+                        { title: "🌐 تخطيط بوينغ 777-300ER الثقيل", text: "طائرة عريضة البدن ذات ممرين مع مقصورات متعددة المناطق، ومقصيرات استراحة للطاقم فوق وتحت السطح، وأنظمة طوارئ عالية السعة." },
+                        { title: "🌐 تكوين إيرباص A350 XWB", text: "هندسة معمارية متقدمة تتميز بديناميكا هوائية لجسم الطائرة المركب، ومطابخ واسعة متعددة الفئات، ولوحات تحكم حديثة لإخلاء الطوارئ." }
+                    ]
+                }
+            },
+            {
+                presenter: { 
+                    en: "Presenter: Mohammed (Project Lead)", 
+                    fr: "Présentateur : Mohammed (Chef de Projet)", 
+                    ar: "المقدم: محمد (قائد المشروع)" 
+                },
+                chapter: { 
+                    en: "Chapter 04 • Human Capital & Conclusion", 
+                    fr: "Chapitre 04 • Human Capital & Conclusion", 
+                    ar: "الفصل 04 • رأس المال البشري والخاتمة" 
+                },
+                title: { 
+                    en: "Aviation Stakeholders & Aerostar Academy Readiness", 
+                    fr: "Acteurs de l'Aviation & Préparation à l'Académie Aerostar", 
+                    ar: "أطراف الطيران الفاعلة وجاهزية أكاديمية أيروستار" 
+                },
+                body: {
+                    en: "Behind every successful flight stands an unbroken chain of aviation professionals: ground handlers, aeronautical maintenance technicians, catering logistics experts, and highly trained cabin crew. Grounded in <strong>Aerostar Academy</strong>'s rigorous professional curriculum, our cadets embody safety leadership, discipline, and absolute operational readiness.",
+                    fr: "Derrière chaque vol réussi se trouve une chaîne ininterrompue de professionnels : agents de piste, techniciens de maintenance, experts en logistique de catering et équipages de cabine. Issus du rigoureux programme de l'<strong>Académie Aerostar</strong>, nos cadets incarnent le leadership en matière de sécurité et de préparation opérationnelle.",
+                    ar: "وراء كل رحلة ناجحة تكمن سلسلة متصلة من محترفي الطيران: عمال الخدمات الأرضية، فنيو صيانة الطيران، خبراء الخدمات اللوجستية للطعام، وأطقم المقصورة المؤهلين تدريباً عالياً. استناداً إلى المناهج المهنية الصارمة في <strong>أكاديمية أيروستار</strong>، يجسد طلابنا القيادة في مجال السلامة، والانضباط، والجاهزية التشغيلية المطلقة."
+                }
+            }
+        ];
+
+        function switchLanguage(lang) {
+            activeLang = lang;
+            document.getElementById('tab-en').classList.toggle('active', lang === 'en');
+            document.getElementById('tab-fr').classList.toggle('active', lang === 'fr');
+            document.getElementById('tab-ar').classList.toggle('active', lang === 'ar');
+            
+            const root = document.getElementById('html-root');
+            if (lang === 'ar') {
+                root.setAttribute('dir', 'rtl');
+            } else {
+                root.setAttribute('dir', 'ltr');
+            }
+
+            renderSlide();
+        }
+
+        function renderSlide() {
+            const step = presentationSlides[currentIdx];
+            const viewport = document.getElementById('slide-viewport');
+
+            document.getElementById('presenter-display').innerText = step.presenter[activeLang];
+            document.getElementById('prev-btn').style.visibility = currentIdx === 0 ? 'hidden' : 'visible';
+            document.getElementById('next-btn').innerText = currentIdx === presentationSlides.length - 1 ? (activeLang === 'ar' ? '🚀 تشغيل فيديو النهاية' : activeLang === 'fr' ? 'Lancer la Vidéo Climax 🚀' : 'Launch Climax Video 🚀') : (activeLang === 'ar' ? 'الفصل التالي ←' : activeLang === 'fr' ? 'Chapitre Suivant →' : 'Next Chapter →');
+
+            let html = `
+                <div class="chapter-tag">${step.chapter[activeLang]}</div>
+                <h1>${step.title[activeLang]}</h1>
+            `;
+
+            if (step.body) {
+                html += `<p class="prose-content">${step.body[activeLang]}</p>`;
+            }
+
+            if (step.grid) {
+                html += `<div class="modern-grid">`;
+                step.grid[activeLang].forEach(card => {
+                    html += `
+                        <div class="modern-card">
+                            <h3>${card.title}</h3>
+                            <p>${card.text}</p>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            viewport.innerHTML = html;
+            renderIndicators();
+        }
+
+        function renderIndicators() {
+            const container = document.getElementById('progress-indicator');
+            let barsHtml = '';
+            for (let i = 0; i < presentationSlides.length; i++) {
+                barsHtml += `<div class="indicator-bar ${i === currentIdx ? 'active' : ''}"></div>`;
+            }
+            container.innerHTML = barsHtml;
+        }
+
+        function nextSlide() {
+            if (currentIdx < presentationSlides.length - 1) {
+                currentIdx++;
+                renderSlide();
+            } else {
+                triggerClimaxModal();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                renderSlide();
+            }
+        }
+
+        function triggerClimaxModal() {
+            const modal = document.getElementById('climax-modal');
+            const iframe = document.getElementById('youtube-embed');
+            // Using youtube-nocookie embed URL with autoplay enabled for live deployment
+            iframe.src = "https://www.youtube-nocookie.com/embed/4nJEaSkqk6w?autoplay=1";
+            modal.style.display = 'flex';
+        }
+
+        function restartPresentation() {
+            const modal = document.getElementById('climax-modal');
+            const iframe = document.getElementById('youtube-embed');
+            iframe.src = "";
+            modal.style.display = 'none';
+            currentIdx = 0;
+            renderSlide();
+        }
+
+        // Initialize stage
+        renderSlide();
+    </script>
+</body>
+</html>
